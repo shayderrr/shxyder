@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kirby's Rizz Master</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background-color: #FFF9FC;
+            box-shadow: 0 10px 25px rgba(244, 114, 182, 0.3);
+            border-radius: 24px;
+            padding: 40px;
+            text-align: center;
+            border: 1px solid #F472B6;
+        }
+        .rizz-line-display {
+            background-color: #FFFACD;
+            padding: 30px 20px;
+            border-radius: 18px;
+            font-size: 1.4rem;
+            min-height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #831843;
+            border: 3px solid #F472B6;
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .generate-button {
+            background-color: #DC2626;
+            color: white;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 6px 15px rgba(220, 38, 38, 0.4);
+            border: none;
+            width: 100%;
+            text-transform: uppercase;
+        }
+        .generate-button:hover {
+            background-color: #B91C1C;
+            transform: translateY(-2px);
+        }
+        .generate-button:active {
+            transform: translateY(0);
+        }
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(244, 114, 182, 0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            border: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .rizz-line-display:hover .copy-button {
+            opacity: 1;
+        }
+        #messageBox {
+            margin-top: 15px;
+            padding: 8px;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-4xl font-extrabold text-pink-900 mb-2">
+            <span class="text-pink-600">Kirby's</span> Rizz Master
+        </h1>
+        <p class="text-pink-700 mb-6">Get a random rizz line instantly!</p>
+        
+        <div class="rizz-line-display">
+            <span id="rizzText">Click the button below!</span>
+            <button id="copyButton" class="copy-button">COPY</button>
+        </div>
+
+        <button id="generateButton" class="generate-button">Generate Rizz</button>
+        <div id="messageBox"></div>
+    </div>
+
+    <script>
+        const rizzLines = [
+            "Are you a campfire? Because you are hot and I want s'more.",
+            "Is your name Google? Because you have everything I've been searching for.",
+            "Do you have a map? I keep getting lost in your eyes.",
+            "Are you an alien? Because you just abducted my heart.",
+            "If you were a vegetable, you'd be a cute-cumber.",
+            "I'm no photographer, but I can definitely picture us together.",
+            "Is your name Wi-Fi? Because I'm really feeling a connection.",
+            "Do you believe in love at first sight, or should I walk by again?",
+            "Are you a parking ticket? Because you've got 'fine' written all over you.",
+            "If beauty were time, you'd be eternity.",
+            "Did you just come out of the oven? Because you are hot!",
+            "I seem to have lost my phone number. Can I have yours?",
+            "Forget outer space, you're the most stunning thing in this universe.",
+            "You must be a magician, because whenever I look at you, everyone else disappears.",
+            "My love for you is like dividing by zero—it can't be defined.",
+            "You must be tired, running through my mind all day.",
+            "Are you a keyboard? Because you're my type.",
+            "Can I borrow a kiss? I promise I'll give it back.",
+            "Do you like Star Wars? Because Yoda only one for me.",
+            "If I could rearrange the alphabet, I'd put U and I together.",
+            "Are you a loan? Because you've certainly got my interest.",
+            "I'm not staring at you, I'm admiring the view.",
+            "My doctor says I'm lacking Vitamin U.",
+            "I'd bet $100 you don't know my favorite color. It’s your eyes.",
+            "You're the reason my phone battery dies—I keep checking your profile.",
+            "If we were in a dark room, I swear you’d still glow.",
+            "You’re the 'view source' of my happiness.",
+            "I hope you know CPR, because you just took my breath away.",
+            "Are you a time traveler? Because I see you in my future.",
+            "I’ve done the math, and it adds up: Me + You = Perfection.",
+            "Your parents must be astronauts, because they created a star.",
+            "You're the only person I'd share my fries with."
+        ];
+
+        const rizzText = document.getElementById('rizzText');
+        const generateButton = document.getElementById('generateButton');
+        const copyButton = document.getElementById('copyButton');
+        const messageBox = document.getElementById('messageBox');
+
+        function showMessage(text, color) {
+            messageBox.textContent = text;
+            messageBox.style.backgroundColor = color;
+            messageBox.style.display = 'block';
+            setTimeout(() => { messageBox.style.display = 'none'; }, 2000);
+        }
+
+        generateButton.addEventListener('click', () => {
+            const randomIndex = Math.floor(Math.random() * rizzLines.length);
+            rizzText.textContent = rizzLines[randomIndex];
+        });
+
+        copyButton.addEventListener('click', () => {
+            const text = rizzText.textContent;
+            if (text === "Click the button below!") return;
+            
+            const el = document.createElement('textarea');
+            el.value = text;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            showMessage("Copied!", "#60A5FA");
+        });
+    </script>
+</body>
+</html>
