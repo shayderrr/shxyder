@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dragon Ball Game Collection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
+    <style>
+        .watermark { position: fixed; bottom: 0; right: 0; padding: 8px; font-size: 0.75rem; color: #ffffff; opacity: 0.6; text-shadow: 1px 1px 2px black; pointer-events: none; z-index: 1000; }
+        
+        body { 
+            font-family: 'Bangers', cursive; 
+            background-image: url('https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7a2d3816-66fc-444a-b22a-81f3a67838af/ddl8jjg-76a679be-2b43-405d-bed4-2926bd379acb.gif?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiIvZi83YTJkMzgxNi02NmZjLTQ0NGEtYjIyYS04MWYzYTY3ODM4YWYvZGRsOGpqZy03NmE2NzliZS0yYjQzLTQwNWQtYmVkNC0yOTI2YmQzNzlhY2IuZ2lmIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.99f2cdQ4igEARwkmP_iXUPRGgLVrwb0E5nu2j1dnlw4'); 
+            background-color: #0d1a2d; 
+            background-size: cover; 
+            background-position: center; 
+            background-repeat: no-repeat; 
+            background-attachment: fixed; 
+            letter-spacing: 0.05em; 
+            color: #ffffff; 
+            min-height: 100%; 
+            overflow-x: hidden; 
+        }
+
+        ::-webkit-scrollbar { width: 12px; }
+        ::-webkit-scrollbar-track { background: #0d1a2d; }
+        ::-webkit-scrollbar-thumb { background: #4a5a73; border: 2px solid #0d1a2d; }
+
+        .filter-btn, #searchInput, .retro-modal, .modal-btn { border: 4px solid #4a5a73; box-shadow: 4px 4px 0px #000; }
+        
+        .game-card { 
+            border: 4px solid #4a5a73; 
+            box-shadow: 4px 4px 0px #000; 
+            transition: all 0.15s ease-in-out; 
+            background-color: #1f2937; 
+            border-radius: 8px; 
+            overflow: hidden; 
+            cursor: pointer;
+        }
+        .game-card:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0px #000; border-color: #f97316; }
+        
+        .filter-btn.active { background-color: #f97316 !important; color: #0d1a2d !important; border-color: #0d1a2d; }
+        
+        #emulator-frame { width: 100%; height: 100%; border: none; }
+        .emulator-container { flex-grow: 1; background-color: #000; position: relative; min-height: 400px; }
+        
+        #jumpOutBtn { position: fixed; top: 1rem; right: 1rem; background-color: #f97316; color: #0d1a2d; padding: 0.75rem; border-radius: 9999px; z-index: 50; border: 4px solid #4a5a73; box-shadow: 4px 4px 0px #000; }
+    </style>
+</head>
+<body class="h-full antialiased">
+    <div class="watermark">made by samtheskeleton. on discord</div>
+
+    <a href="#" id="jumpOutBtn" title="Open in New Tab">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+    </a>
+
+    <div id="app" class="container mx-auto p-4 md:p-8 max-w-7xl">
+        <header class="text-center mb-10">
+            <h1 class="font-bold tracking-tight text-5xl md:text-8xl" style="text-shadow: 4px 4px 0 #000;">
+                <span class="text-yellow-400">DRAGON BALL</span> <br>
+                <span class="text-red-600">COMPLETE COLLECTION</span>
+            </h1>
+        </header>
+
+        <div class="mb-8 max-w-xl mx-auto">
+            <input type="search" id="searchInput" placeholder="Search for Goku, Vegeta, NES, GBA..." class="w-full bg-gray-800 text-white px-4 py-3 focus:outline-none">
+        </div>
+
+        <div id="filterContainer" class="flex justify-center flex-wrap gap-3 mb-8">
+            <button class="filter-btn bg-gray-700 active py-2 px-4" data-filter="all">ALL</button>
+            <button class="filter-btn bg-gray-700 py-2 px-4" data-filter="nes">NES</button>
+            <button class="filter-btn bg-gray-700 py-2 px-4" data-filter="snes">SNES</button>
+            <button class="filter-btn bg-gray-700 py-2 px-4" data-filter="gba">GBA</button>
+            <button class="filter-btn bg-gray-700 py-2 px-4" data-filter="nds">NDS</button>
+        </div>
+
+        <div id="gameCollection" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            
+            <!-- NES -->
+            <div class="game-card" data-title="Shen Long no Nazo" data-platform="nes" data-core="nes" data-rom-url="https://cdn.jsdelivr.net/gh/samtheskeleton/dbz@main/Dragon%20Ball%20-%20Shen%20Long%20no%20Nazo%20(Japan).zip">
+                <img src="https://placehold.co/300x420/4B5563/E5E7EB?text=Shen+Long+no+Nazo" alt="NES">
+                <div class="p-3"><h3 class="font-bold truncate">Shen Long no Nazo</h3><p class="text-gray-400 text-xs mt-1">NES - 86</p></div>
+            </div>
+            <div class="game-card" data-title="Kyoushuu! Saiya Jin" data-platform="nes" data-core="nes" data-rom-url="https://cdn.jsdelivr.net/gh/samtheskeleton/dbz@main/Dragon%20Ball%20Z%20-%20Kyoushuu!%20Saiya%20Jin%20(Japan)%20(En).zip">
+                <img src="https://placehold.co/300x420/4B5563/E5E7EB?text=Kyoushuu+Saiya+Jin" alt="NES">
+                <div class="p-3"><h3 class="font-bold truncate">Kyoushuu! Saiya Jin</h3><p class="text-gray-400 text-xs mt-1">NES - 90</p></div>
+            </div>
+            <div class="game-card" data-title="Gekishin Freeza!!" data-platform="nes" data-core="nes" data-rom-url="https://cdn.jsdelivr.net/gh/samtheskeleton/dbz@main/Dragon%20Ball%20Z%20II%20-%20Gekishin%20Freeza!!%20(Japan).zip">
+                <img src="https://placehold.co/300x420/4B5563/E5E7EB?text=Gekishin+Freeza" alt="NES">
+                <div class="p-3"><h3 class="font-bold truncate">Gekishin Freeza!!</h3><p class="text-gray-400 text-xs mt-1">NES - 91</p></div>
+            </div>
+            <div class="game-card" data-title="Ressen Jinzou Ningen" data-platform="nes" data-core="nes" data-rom-url="https://cdn.jsdelivr.net/gh/samtheskeleton/dbz@main/Dragon%20Ball%20Z%20III%20-%20Ressen%20Jinzou%20Ningen%20(Japan).zip">
+                <img src="https://placehold.co/300x420/4B5563/E5E7EB?text=Ressen+Jinzou" alt="NES">
+                <div class="p-3"><h3 class="font-bold truncate">Ressen Jinzou Ningen</h3><p class="text-gray-400 text-xs mt-1">NES - 92</p></div>
+            </div>
+            <div class="game-card" data-title="Saiya Jin Zetsumetsu Keikaku" data-platform="nes" data-core="nes" data-rom-url="https://cdn.jsdelivr.net/gh/samtheskeleton/dbz@main/Dragon%20Ball%20Z%20-%20Saiya%20Jin%20Zetsumetsu%20Keikaku%20(Japan).zip">
+                <img src="https://placehold.co/300x420/4B5563/E5E7EB?text=Zetsumetsu+Keikaku" alt="NES">
+                <div class="p-3"><h3 class="font-bold truncate">Saiya Jin Zetsumetsu</h3><p class="text-gray-400 text-xs mt-1">NES - 93</p></div>
+            </div>
+
+            <!-- SNES -->
+            <div class="game-card" data-title="Super Saiya Densetsu" data-platform="snes" data-core="snes" data-rom-url="https://cdn.jsdelivr.net/gh/samtheskeleton/dbz-gba@main/Dragon%20Ball%20Z%20-%20Super%20Saiya%20Densetsu%20(Japan)%20(Rev%201)%20(En)%20(v0.99)%20(DBZ%20Trans).zip">
+                <img src="https://placehold.co/300x420/581C87/E9D5FF?text=Saiya+Densetsu" alt="SNES">
+                <div class="p-3"><h3 class="font-bold truncate">Super Saiya Densetsu</h3><p class="text-gray-400 text-xs mt-1">SNES - 92</p></div>
+            </div>
+            <div class="game-card" data-title="Super Butōden" data-platform="snes" data-core="snes" data-rom-url="https://cdn.jsdelivr.net/gh/samtheskeleton/dbz-gba@main/Dragon%20Ball%20Z%20-%20Super%20Butouden%20(Japan).zip">
+                <img src="https://placehold.co/300x420/581C87/E9D5FF?text=Super+Butoden" alt="SNES">
+                <div class="p-3"><h3 class="font-bold truncate">Super Butōden</h3><p class="text-gray-400 text-xs mt-1">SNES - 93</p></div>
+            </div>
+            <div class="game-card" data-title="Super Butōden 2" data-platform="snes" data-core="snes" data-rom-url="https://cdn.jsdelivr.net/gh/samtheskeleton/dbz-gba@main/Dragon%20Ball%20Z%20-%20Super%20Butouden%202%20(Japan).zip">
+                <img src="https://placehold.co/300x420/581C87/E9D5FF?text=Super+Butoden+2" alt="SNES">
+                <div class="p-3"><h3 class="font-bold truncate">Super Butōden 2</h3><p class="text-gray-400 text-xs mt-1">SNES - 93</p></div>
+            </div>
+            <div class="game-card" data-title="Super Butōden 3" data-platform="snes" data-core="snes" data-rom-url="https://cdn.jsdelivr.net/gh/samtheskeleton/dbz-gba@main/Dragon%20Ball%20Z%20-%20Super%20Butouden%203%20(Japan).zip">
+                <img src="https://placehold.co/300x420/581C87/E9D5FF?text=Super+Butoden+3" alt="SNES">
+                <div class="p-3"><h3 class="font-bold truncate">Super Butōden 3</h3><p class="text-gray-400 text-xs mt-1">SNES - 94</p></div>
+            </div>
+            <div class="game-card" data-title="Hyper Dimension" data-platform="snes" data-core="snes" data-rom-url="https://cdn.jsdelivr.net/gh/samtheskeleton/dbz-gba@main/Dragon%20Ball%20Z%20-%20Hyper%20Dimension%20(Japan)%20(En).zip">
+                <img src="https://placehold.co/300x420/581C87/E9D5FF?text=Hyper+Dimension" alt="SNES">
+                <div class="p-3"><h3 class="font-bold truncate">Hyper Dimension</h3><p class="text-gray-400 text-xs mt-1">SNES - 96</p></div>
+            </div>
+
+            <!-- GBA -->
+            <div class="game-card" data-title="The Legacy of Goku" data-platform="gba" data-core="gba" data-rom-url="https://cdn.jsdelivr.net/gh/samtheskeleton/dbz-gba@main/Dragon%20Ball%20Z%20-%20The%20Legacy%20of%20Goku%20(USA).zip">
+                <img src="https://placehold.co/300x420/7C2D12/FED7AA?text=Legacy+of+Goku" alt="GBA">
+                <div class="p-3"><h3 class="font-bold truncate">Legacy of Goku</h3><p class="text-gray-400 text-xs mt-1">GBA - 02</p></div>
+            </div>
+            <div class="game-card" data-title="The Legacy of Goku II" data-platform="gba" data-core="gba" data-rom-url="https://cdn.jsdelivr.net/gh/samtheskeleton/dbz-gba@main/Dragon%20Ball%20Z%20-%20The%20Legacy%20of%20Goku%20II%20(USA).zip">
+                <img src="https://placehold.co/300x420/7C2D12/FED7AA?text=Legacy+of+Goku+II" alt="GBA">
+                <div class="p-3"><h3 class="font-bold truncate">Legacy of Goku II</h3><p class="text-gray-400 text-xs mt-1">GBA - 03</p></div>
+            </div>
+            <div class="game-card" data-title="Buu's Fury" data-platform="gba" data-core="gba" data-rom-url="https://cdn.jsdelivr.net/gh/samtheskeleton/dbz-gba@main/Dragon%20Ball%20Z%20-%20Buu's%20Fury%20(USA).zip">
+                <img src="https://placehold.co/300x420/7C2D12/FED7AA?text=Buu's+Fury" alt="GBA">
+                <div class="p-3"><h3 class="font-bold truncate">Buu's Fury</h3><p class="text-gray-400 text-xs mt-1">GBA - 04</p></div>
+            </div>
+            <div class="game-card" data-title="Advanced Adventure" data-platform="gba" data-core="gba" data-rom-url="https://cdn.jsdelivr.net/gh/samtheskeleton/dbz-gba@main/Dragon%20Ball%20-%20Advanced%20Adventure%20(Europe)%20(En%2CFr%2CDe%2CEs%2CIt).zip">
+                <img src="https://placehold.co/300x420/7C2D12/FED7AA?text=Advanced+Adv" alt="GBA">
+                <div class="p-3"><h3 class="font-bold truncate">Advanced Adventure</h3><p class="text-gray-400 text-xs mt-1">GBA - 04</p></div>
+            </div>
+            <div class="game-card" data-title="Supersonic Warriors" data-platform="gba" data-core="gba" data-rom-url="https://cdn.jsdelivr.net/gh/samtheskeleton/dbz-gba@main/Dragon%20Ball%20Z%20-%20Supersonic%20Warriors%20(USA).zip">
+                <img src="https://placehold.co/300x420/7C2D12/FED7AA?text=Supersonic+War" alt="GBA">
+                <div class="p-3"><h3 class="font-bold truncate">Supersonic Warriors</h3><p class="text-gray-400 text-xs mt-1">GBA - 04</p></div>
+            </div>
+            <div class="game-card" data-title="GT Transformation" data-platform="gba" data-core="gba" data-rom-url="https://cdn.jsdelivr.net/gh/samtheskeleton/dbz-gba@main/Dragon%20Ball%20GT%20-%20Transformation%20(USA)%20(Anti-Cheat)%20(manakoDE).zip">
+                <img src="https://placehold.co/300x420/7C2D12/FED7AA?text=GT+Transformation" alt="GBA">
+                <div class="p-3"><h3 class="font-bold truncate">GT: Transformation</h3><p class="text-gray-400 text-xs mt-1">GBA - 05</p></div>
+            </div>
+
+            <!-- NDS -->
+            <div class="game-card" data-title="Supersonic Warriors 2" data-platform="nds" data-core="nds" data-rom-url="https://cdn.jsdelivr.net/gh/samtheskeleton/dbz-gba@main/Dragon%20Ball%20Z%20-%20Supersonic%20Warriors%202/Dragon%20Ball%20Z%20-%20Supersonic%20Warriors%202%20(Europe)%20(En%2CFr%2CDe%2CEs%2CIt).zip" data-load-type="merge" data-min-part="1" data-max-part="2">
+                <img src="https://placehold.co/300x420/1E3A8A/DBEAFE?text=Supersonic+War+2" alt="NDS">
+                <div class="p-3"><h3 class="font-bold truncate">Supersonic Warriors 2</h3><p class="text-gray-400 text-xs mt-1">NDS - 05</p></div>
+            </div>
+            <div class="game-card" data-title="Goku Densetsu" data-platform="nds" data-core="nds" data-rom-url="https://cdn.jsdelivr.net/gh/samtheskeleton/dbz-gba@main/Dragon%20Ball%20Z%20-%20Goku%20Densetsu/Dragon%20Ball%20Z%20-%20Goku%20Densetsu%20(Europe)%20(En%2CFr%2CDe%2CEs%2CIt).zip" data-load-type="merge" data-min-part="1" data-max-part="2">
+                <img src="https://placehold.co/300x420/1E3A8A/DBEAFE?text=Goku+Densetsu" alt="NDS">
+                <div class="p-3"><h3 class="font-bold truncate">Goku Densetsu</h3><p class="text-gray-400 text-xs mt-1">NDS - 07</p></div>
+            </div>
+            <div class="game-card" data-title="Dragon Ball: Origins" data-platform="nds" data-core="nds" data-rom-url="https://cdn.jsdelivr.net/gh/samtheskeleton/dbz-gba@main/Dragon%20Ball%20-%20Origins/Dragon%20Ball%20-%20Origins%20(Europe)%20(En%2CFr%2CDe%2CEs%2CIt).zip" data-load-type="merge" data-min-part="1" data-max-part="2">
+                <img src="https://placehold.co/300x420/1E3A8A/DBEAFE?text=DB+Origins" alt="NDS">
+                <div class="p-3"><h3 class="font-bold truncate">DB: Origins</h3><p class="text-gray-400 text-xs mt-1">NDS - 08</p></div>
+            </div>
+            <div class="game-card" data-title="Attack of the Saiyans" data-platform="nds" data-core="nds" data-rom-url="https://cdn.jsdelivr.net/gh/samtheskeleton/dbz@main/Dragon%20Ball%20Z%20-%20Attack%20of%20the%20Saiyans%20(Europe)%20(En%2CFr%2CDe%2CEs%2CIt).zip" data-load-type="merge" data-min-part="1" data-max-part="4">
+                <img src="https://placehold.co/300x420/1E3A8A/DBEAFE?text=Attack+Saiya" alt="NDS">
+                <div class="p-3"><h3 class="font-bold truncate">Attack of the Saiyans</h3><p class="text-gray-400 text-xs mt-1">NDS - 09</p></div>
+            </div>
+            <div class="game-card" data-title="Dragon Ball: Origins 2" data-platform="nds" data-core="nds" data-rom-url="https://cdn.jsdelivr.net/gh/samtheskeleton/dbz@main/Dragon%20Ball_%20Origins%202.zip" data-load-type="merge" data-min-part="1" data-max-part="3">
+                <img src="https://placehold.co/300x420/1E3A8A/DBEAFE?text=DB+Origins+2" alt="NDS">
+                <div class="p-3"><h3 class="font-bold truncate">DB: Origins 2</h3><p class="text-gray-400 text-xs mt-1">NDS - 10</p></div>
+            </div>
+        </div>
+
+        <div id="emptyState" class="hidden text-center p-12 mt-8">
+            <h3 class="text-2xl font-semibold">NO GAMES FOUND</h3>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="warningModal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 z-[60]">
+        <div class="bg-gray-800 w-full max-w-md p-6 retro-modal">
+            <h3 class="font-bold text-orange-400 mb-4">Important Notice</h3>
+            <p class="mb-6 text-sm">Saving progress may not work reliably. Avoid refreshing while playing. This collection is a Work In Progress.</p>
+            <button id="closeWarningBtn" class="w-full bg-orange-500 text-gray-900 font-bold py-3 px-4">Okay, Got It!</button>
+        </div>
+    </div>
+
+    <div id="gameModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center p-4 z-50 hidden"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const gameCollection = document.getElementById('gameCollection');
+            const searchInput = document.getElementById('searchInput');
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const warningModal = document.getElementById('warningModal');
+            const gameModal = document.getElementById('gameModal');
+
+            // Close Warning
+            document.getElementById('closeWarningBtn').onclick = () => warningModal.style.display = 'none';
+
+            // Filter Logic
+            function updateCards() {
+                const term = searchInput.value.toLowerCase();
+                const filter = document.querySelector('.filter-btn.active').dataset.filter;
+                let count = 0;
+
+                document.querySelectorAll('.game-card').forEach(card => {
+                    const title = card.dataset.title.toLowerCase();
+                    const plat = card.dataset.platform;
+                    const match = (filter === 'all' || plat === filter) && title.includes(term);
+                    card.style.display = match ? 'block' : 'none';
+                    if(match) count++;
+                });
+                document.getElementById('emptyState').classList.toggle('hidden', count > 0);
+            }
+
+            searchInput.oninput = updateCards;
+            filterButtons.forEach(btn => {
+                btn.onclick = () => {
+                    filterButtons.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    updateCards();
+                };
+            });
+
+            // Emulator Logic
+            function launchGame(card) {
+                const { title, romUrl, core, loadType, minPart, maxPart } = card.dataset;
+                const base = "https://cdn.jsdelivr.net/gh/genizy/emu@master/";
+                let frameHtml = '';
+
+                if (loadType === 'merge') {
+                    frameHtml = `<!DOCTYPE html><html><head><script>
+                    function mergeFiles(file, min, max) {
+                        return new Promise((resolve) => {
+                            let buffers = [];
+                            let fetched = 0;
+                            for(let i=min; i<=max; i++) {
+                                fetch(file + ".part" + i).then(r => r.arrayBuffer()).then(data => {
+                                    buffers[i-min] = data;
+                                    fetched++;
+                                    if(fetched === (max-min+1)) resolve(URL.createObjectURL(new Blob(buffers)));
+                                });
+                            }
+                        });
+                    }
+                    mergeFiles("${romUrl}", ${minPart}, ${maxPart}).then(url => {
+                        window.EJS_player="#game"; window.EJS_core="${core}"; window.EJS_gameUrl=url;
+                        let s = document.createElement("script"); s.src="${base}loader.js"; document.body.appendChild(s);
+                    });
+                    <\/script><style>body,html{margin:0;padding:0;width:100%;height:100%;background:#000;color:#fff;display:flex;align-items:center;justify-content:center;}#game{width:100%;height:100%;}</style></head><body><div id="game">Loading Parts...</div></body></html>`;
+                } else {
+                    frameHtml = `<!DOCTYPE html><html><head><style>body,html{margin:0;padding:0;width:100%;height:100%;background:#000;overflow:hidden;}</style></head><body><div id="game" style="width:100%;height:100%;"></div><script>EJS_player="#game";EJS_core="${core}";EJS_gameName="${title}";EJS_startOnLoaded=true;EJS_pathtodata="${base}";EJS_gameUrl="${romUrl}";<\/script><script src="${base}loader.js"><\/script></body></html>`;
+                }
+
+                gameModal.innerHTML = `
+                    <div class="bg-gray-800 w-full max-w-5xl h-[85vh] flex flex-col p-4 border-4 border-orange-500 relative">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-orange-400 text-xl">${title}</span>
+                            <button id="closeModalBtn" class="bg-red-600 text-white px-4 py-1 text-sm border-2 border-black">CLOSE</button>
+                        </div>
+                        <div class="emulator-container">
+                            <iframe id="emulator-frame" srcdoc="${frameHtml.replace(/"/g, '&quot;')}" allow="fullscreen"></iframe>
+                        </div>
+                    </div>`;
+                
+                gameModal.classList.remove('hidden');
+                document.getElementById('closeModalBtn').onclick = () => {
+                    gameModal.classList.add('hidden');
+                    gameModal.innerHTML = '';
+                };
+            }
+
+            // Event Delegation
+            gameCollection.onclick = (e) => {
+                const card = e.target.closest('.game-card');
+                if (card) launchGame(card);
+            };
+
+            // Jump Out
+            document.getElementById('jumpOutBtn').onclick = (e) => {
+                e.preventDefault();
+                const blob = new Blob([document.documentElement.outerHTML], {type: 'text/html'});
+                window.open(URL.createObjectURL(blob), '_blank');
+            };
+        });
+    </script>
+</body>
+</html>
