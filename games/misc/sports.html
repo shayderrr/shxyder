@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sports Random Collection</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bangers&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Anton', sans-serif;
+            background-color: #1a1a1a;
+            color: #f0f0f0;
+            margin: 0;
+            background-image: url('https://i.ytimg.com/vi/cF5puJrHP4M/maxresdefault.jpg');
+            background-size: cover;
+            background-position: center center;
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        .main-container { padding: 20px; }
+        
+        h1, h2 { text-align: center; text-transform: uppercase; margin: 0; }
+        
+        h1 {
+            font-family: 'Bangers', cursive;
+            color: #ffffff;
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            letter-spacing: 2px;
+            -webkit-text-stroke: 2px #000;
+            text-shadow: 4px 4px 6px rgba(0, 0, 0, 0.7);
+        }
+
+        h2 {
+            font-family: 'Bangers', cursive;
+            color: #00b4d8;
+            font-size: clamp(1.2rem, 3vw, 2rem);
+            -webkit-text-stroke: 1px #000;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 30px;
+        }
+
+        #popOutBtn {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 2000;
+            padding: 10px 15px;
+            background-color: #00b4d8;
+            border: 2px solid #000;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .game-collection {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .game-card {
+            background-color: #2a2a2a;
+            border-radius: 12px;
+            border: 3px solid #0077b6;
+            overflow: hidden;
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+
+        .game-card:hover {
+            transform: translateY(-8px);
+            border-color: #00b4d8;
+            box-shadow: 0 10px 20px rgba(0, 180, 216, 0.4);
+        }
+
+        .game-card img { width: 100%; height: 180px; object-fit: cover; }
+        .game-card h3 { font-family: 'Bangers', cursive; font-size: 1.8rem; margin: 10px 0; color: #fff; }
+        .game-card p { font-family: 'Anton', sans-serif; color: #00b4d8; margin-bottom: 15px; font-size: 0.9rem; letter-spacing: 1px; }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            width: 95%; height: 90vh; max-width: 1000px;
+            background: #111;
+            border: 3px solid #00b4d8;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: 15px;
+            background: #222;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #modalTitle { font-family: 'Bangers', cursive; color: #fff; margin: 0; font-size: 1.5rem; }
+
+        .close-btn {
+            background: #ff4d4d;
+            border: 2px solid #000;
+            color: #fff;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .game-container { flex-grow: 1; background: #000; position: relative; }
+        #gameFrame { width: 100%; height: 100%; border: none; }
+        
+        #loadingMsg {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Bangers', cursive;
+            color: #00b4d8;
+            font-size: 2rem;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <button id="popOutBtn" onclick="popOut()">⇱</button>
+    <h1>Sports Random</h1>
+    <h2>Complete Collection</h2>
+
+    <div class="game-collection" id="gameGrid">
+        <div class="game-card" data-id="basket-random" data-title="Basket Random">
+            <img src="https://play-lh.googleusercontent.com/o3-Y1-I-n-SwR-t-r0-bna8-y-m-d-nADJ-6-2Q3-f-I-2-m-o-s-w-K-o-Q-w-H-c-A=w240-h480-rw" alt="Basket">
+            <h3>Basket Random</h3>
+            <p>BASKETBALL</p>
+        </div>
+        <div class="game-card" data-id="boxing-random" data-title="Boxing Random">
+            <img src="https://play-lh.googleusercontent.com/L-m-Y-R-g-I-N-g-A-v-Q-y-E-g-I-N-g-A-v-Q-y-E-g-I-N-g-A-v-Q-y-E-g-I-N-g/w240-h480-rw" alt="Boxing">
+            <h3>Boxing Random</h3>
+            <p>BOXING</p>
+        </div>
+        <div class="game-card" data-id="soccer-random" data-title="Soccer Random">
+            <img src="https://play-lh.googleusercontent.com/4W9P8_VfGv-vXW8w9y_A_z3lUfN8Y9_vXW8w9y_A_z3lUfN8Y9_vXW8w9y_A_z3lUfN8=w240-h480-rw" alt="Soccer">
+            <h3>Soccer Random</h3>
+            <p>SOCCER</p>
+        </div>
+        <div class="game-card" data-id="volley-random" data-title="Volley Random">
+            <img src="https://play-lh.googleusercontent.com/g-P-w-A-x-I-F-W-S-w-C-y-P-A-w-I-F-W-S-w-C-y-P-A-w-I-F-W-S-w-C-y-P-A-w/w240-h480-rw" alt="Volley">
+            <h3>Volley Random</h3>
+            <p>VOLLEYBALL</p>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="gameModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="modalTitle">Loading...</h2>
+            <button class="close-btn" onclick="closeModal()">×</button>
+        </div>
+        <div class="game-container">
+            <div id="loadingMsg">FETCHING BRICKS...</div>
+            <iframe id="gameFrame" src="about:blank" sandbox="allow-scripts allow-same-origin allow-pointer-lock"></iframe>
+        </div>
+    </div>
+</div>
+
+<script>
+    const modal = document.getElementById('gameModal');
+    const iframe = document.getElementById('gameFrame');
+    const modalTitle = document.getElementById('modalTitle');
+
+    // THIS IS THE FIX: We use a Base URL so the game finds its internal files
+    const CDN_URL = "https://cdn.jsdelivr.net/gh/bubbls/ruffle@main/";
+
+    function getGameHtml(folder) {
+        return `
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <base href="${CDN_URL}${folder}/">
+                <style>body,html{margin:0;padding:0;width:100%;height:100%;overflow:hidden;background:#000;}</style>
+                <link rel="stylesheet" href="style.css">
+            </head>
+            <body>
+                <script src="box2d.js"><\/script>
+                <script src="offclient.js" type="module"><\/script>
+                <script src="main.js" type="module"><\/script>
+            </body>
+            </html>
+        `;
+    }
+
+    // Event Delegation for clicking cards
+    document.getElementById('gameGrid').addEventListener('click', function(e) {
+        const card = e.target.closest('.game-card');
+        if (!card) return;
+
+        const id = card.dataset.id;
+        const title = card.dataset.title;
+
+        modalTitle.textContent = title;
+        modal.style.display = 'flex';
+        
+        // Injecting corrected HTML
+        iframe.srcdoc = getGameHtml(id);
+    });
+
+    function closeModal() {
+        modal.style.display = 'none';
+        iframe.srcdoc = "";
+        iframe.src = "about:blank";
+    }
+
+    function popOut() {
+        const blob = new Blob([document.documentElement.outerHTML], { type: 'text/html' });
+        window.open(URL.createObjectURL(blob), '_blank');
+    }
+
+    // Close on background click
+    modal.onclick = (e) => { if (e.target === modal) closeModal(); };
+</script>
+
+</body>
+</html>
