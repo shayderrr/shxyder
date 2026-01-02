@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Norepted - Kirby Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@300;400;600&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #c2e9fb;
+            --text-color: #6D455D;
+            --primary-accent: #F472B6;
+            --glow-color: rgba(244, 114, 182, 0.5);
+            --glass-bg: rgba(255, 255, 255, 0.5);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --font-main: 'Roboto Mono', monospace;
+            --font-display: 'Nunito', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-display);
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1rem;
+            margin: 0;
+        }
+
+        .btn-base {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.75rem;
+            color: #FFFFFF;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            border: none;
+            z-index: 1;
+        }
+
+        .btn-base::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: var(--primary-accent);
+            z-index: -2;
+        }
+
+        .btn-base .glint {
+            position: absolute;
+            top: 0; left: -150%; width: 80%; height: 100%;
+            background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.5) 50%, rgba(255, 255, 255, 0) 100%);
+            transform: skewX(-25deg);
+            transition: left 0.7s ease-in-out;
+        }
+
+        .btn-base:hover .glint { left: 150%; }
+        .btn-base:hover { transform: translateY(-2px); box-shadow: 0 4px 12px var(--glow-color); }
+
+        #launch::before { background-color: #DC2626; }
+        #copy::before { background-color: #FFD700; }
+        #copy { color: #6D455D; }
+        #aboutblank::before { background-color: #87CEEB; }
+
+        .input-container input {
+            background-color: rgba(255, 255, 255, 0.9);
+            color: var(--text-color);
+            border: 2px solid var(--primary-accent);
+            padding: 8px 15px;
+            border-radius: 15px;
+            width: 280px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .input-container input:focus {
+            border-color: #DC2626;
+            box-shadow: 0 0 10px rgba(220, 38, 38, 0.3);
+        }
+
+        #video {
+            display: none;
+            border: 4px solid var(--primary-accent);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-width: 100%;
+        }
+
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0; left: 0;
+            z-index: -1;
+        }
+
+        nav {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            padding: 1rem 2rem;
+            border-radius: 20px;
+        }
+
+        .headinglink {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-color);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="particles-js"></div>
+
+    <nav class="mb-8 text-center">
+        <a href="#" class="headinglink">Norepted vD.L</a>
+        <div class="flex justify-center gap-4 mt-2">
+            <button onclick="location.reload()" class="btn-base text-xs">Home</button>
+            <button onclick="window.open('https://forms.gle/3TEjjsnqWUXgo5kQ7', '_blank')" class="btn-base text-xs">Suggestions</button>
+        </div>
+    </nav>
+
+    <h1 id="title" class="text-5xl font-bold mb-6 text-red-600">YouTube Watcher</h1>
+
+    <div id="instructions" class="rounded-2xl shadow-lg p-6 max-w-xl text-center bg-white/40 backdrop-blur-md mb-6">
+        <p class="font-bold mb-2">1. Paste link & press LAUNCH</p>
+        <p class="text-sm mb-2">2. Press <strong>-</strong> and <strong>0</strong> together to exit quickly.</p>
+        <p class="text-sm mb-4">3. Press <strong>1</strong> to cloak the tab as Google Drive.</p>
+        
+        <button id="aboutblank" onclick="aboutblank()" class="btn-base w-full mb-4">Open in about:blank</button>
+        
+        <p class="text-xs italic" id="copy_tip">Press COPY to save link for later.</p>
+        <button class="btn-base bg-pink-400 mt-4 text-xs" onclick="toggleInstructions()">Hide Instructions</button>
+    </div>
+
+    <div id="show-instr-container" style="display: none;">
+        <button class="btn-base text-xs mb-6" onclick="toggleInstructions()">Show Instructions</button>
+    </div>
+
+    <div class="input-container flex flex-wrap justify-center items-center gap-2">
+        <input type="text" id="link" placeholder="Paste YouTube link here...">
+        <button class="btn-base bg-red-500" onclick="document.getElementById('link').value = ''">Clear</button>
+    </div>
+
+    <div class="flex gap-4 mt-6">
+        <button class="btn-base px-10" id="launch" onclick="fix_link()">LAUNCH <span class="glint"></span></button>
+        <button class="btn-base px-10" id="copy" onclick="copy_link()">COPY <span class="glint"></span></button>
+    </div>
+
+    <div id="loading" class="mt-4 hidden text-pink-600 font-bold animate-bounce">Loading Kirby's Stream...</div>
+
+    <iframe class="rounded-xl mt-8" id="video" width="650" height="425" src="" allowfullscreen></iframe>
+
+    <div class="size-controls mt-6 hidden items-center gap-4">
+        <span class="font-bold">Size:</span>
+        <button class="btn-base bg-red-500 px-4" onclick="adjustSize(0.8)">-</button>
+        <button class="btn-base bg-green-500 px-4" onclick="adjustSize(1.2)">+</button>
+    </div>
+
+    <footer class="mt-12 text-center text-sm opacity-60 max-w-xl">
+        <p>Made by WG563 / wea-f</p>
+        <p class="text-red-600 font-bold mt-2">Disclaimer: You are responsible for your own device usage.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        // Track key states for simultaneous press
+        let keysPressed = {};
+
+        document.addEventListener('keydown', (e) => {
+            keysPressed[e.key] = true;
+
+            // Shortcut: Enter to launch
+            if (e.key === 'Enter') fix_link();
+
+            // Shortcut: 1 to Cloak
+            if (e.key === '1') {
+                document.title = "My Drive - Google Drive";
+                let link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+                link.type = 'image/x-icon';
+                link.rel = 'shortcut icon';
+                link.href = 'https://ssl.gstatic.com/images/branding/product/1x/drive_2020q4_32dp.png';
+                document.getElementsByTagName('head')[0].appendChild(link);
+            }
+
+            // Shortcut: - and 0 together to Exit
+            if (keysPressed['-'] && keysPressed['0']) {
+                window.location.replace("https://www.google.com");
+            }
+        });
+
+        document.addEventListener('keyup', (e) => {
+            delete keysPressed[e.key];
+        });
+
+        function extractVideoId(url) {
+            const regex = /(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+            const match = url.match(regex);
+            return match ? match[1] : null;
+        }
+
+        function fix_link() {
+            const val = document.getElementById('link').value;
+            const id = extractVideoId(val);
+            const vidFrame = document.getElementById('video');
+            const loader = document.getElementById('loading');
+            const controls = document.querySelector('.size-controls');
+
+            if (id) {
+                loader.classList.remove('hidden');
+                vidFrame.style.display = "block";
+                vidFrame.src = `https://www.youtube.com/embed/${id}?autoplay=1`;
+                
+                vidFrame.onload = () => {
+                    loader.classList.add('hidden');
+                    controls.classList.remove('hidden');
+                    controls.style.display = 'flex';
+                };
+            } else {
+                alert("Please enter a valid YouTube URL");
+            }
+        }
+
+        function copy_link() {
+            const val = document.getElementById('link').value;
+            const id = extractVideoId(val);
+            if (id) {
+                const final = `https://www.youtube.com/watch?v=${id}`;
+                navigator.clipboard.writeText(final).then(() => {
+                    alert("Embed-ready link copied to clipboard!");
+                });
+            }
+        }
+
+        function adjustSize(multiplier) {
+            const vid = document.getElementById('video');
+            vid.width = vid.width * multiplier;
+            vid.height = vid.height * multiplier;
+        }
+
+        function toggleInstructions() {
+            const ins = document.getElementById('instructions');
+            const btn = document.getElementById('show-instr-container');
+            if (ins.style.display === 'none') {
+                ins.style.display = 'block';
+                btn.style.display = 'none';
+            } else {
+                ins.style.display = 'none';
+                btn.style.display = 'block';
+            }
+        }
+
+        function aboutblank() {
+            const url = window.location.href;
+            const win = window.open("about:blank", "_blank");
+            if (win) {
+                win.document.write(`
+                    <body style="margin:0;padding:0">
+                        <iframe style="width:100%;height:100vh;border:none" src="${url}"></iframe>
+                    </body>
+                `);
+            }
+        }
+
+        // Kirby Particles
+        particlesJS("particles-js", {
+            "particles": {
+                "number": { "value": 40 },
+                "color": { "value": ["#F472B6", "#DC2626", "#FFD700", "#FFFFFF"] },
+                "shape": { "type": "star" },
+                "opacity": { "value": 0.5, "random": true },
+                "size": { "value": 4, "random": true },
+                "move": { "enable": true, "speed": 2, "direction": "bottom" }
+            }
+        });
+    </script>
+</body>
+</html>
