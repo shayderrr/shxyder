@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Void HTML Embedder - Fixed</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #050510;
+            background-image: 
+                radial-gradient(circle at 50% 50%, rgba(74, 0, 224, 0.15) 0%, transparent 80%),
+                linear-gradient(rgba(138, 43, 226, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(138, 43, 226, 0.05) 1px, transparent 1px);
+            background-size: 100% 100%, 30px 30px, 30px 30px;
+            color: #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .void-container {
+            background-color: rgba(20, 20, 58, 0.8);
+            backdrop-filter: blur(10px);
+            border: 2px solid #8A2BE2;
+            border-radius: 20px;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 800px;
+            box-shadow: 0 0 40px rgba(138, 43, 226, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animated border glow */
+        .void-container::before {
+            content: '';
+            position: absolute;
+            top: -2px; left: -2px; right: -2px; bottom: -2px;
+            background: linear-gradient(45deg, #8A2BE2, #00ffcc, #4A00E0, #8A2BE2);
+            z-index: -1;
+            background-size: 400%;
+            animation: borderGlow 10s linear infinite;
+            opacity: 0.3;
+        }
+
+        @keyframes borderGlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .void-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.5rem;
+            color: #fff;
+            text-shadow: 0 0 10px #8A2BE2, 0 0 20px #8A2BE2;
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+
+        .void-textarea {
+            background-color: #02020a;
+            color: #00ffcc;
+            border: 1px solid #4A00E0;
+            border-radius: 12px;
+            padding: 1.2rem;
+            width: 100%;
+            min-height: 300px;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.9rem;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.8);
+            resize: vertical;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .void-textarea:focus {
+            border-color: #00ffcc;
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.2), inset 0 0 15px rgba(0, 0, 0, 0.8);
+        }
+
+        .void-button {
+            background: linear-gradient(45deg, #8A2BE2, #4A00E0);
+            color: white;
+            font-weight: 800;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 1.5rem;
+            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4);
+        }
+
+        .void-button:hover {
+            transform: scale(1.05) translateY(-3px);
+            box-shadow: 0 10px 25px rgba(138, 43, 226, 0.6);
+            background: linear-gradient(45deg, #9b47f5, #5a12f5);
+        }
+
+        .void-button:active {
+            transform: scale(0.95);
+        }
+
+        /* Message Box */
+        #messageBox {
+            display: none;
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ff4d4d;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            z-index: 1000;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { bottom: -50px; opacity: 0; }
+            to { bottom: 30px; opacity: 1; }
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #050510; }
+        ::-webkit-scrollbar-thumb { background: #4A00E0; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #8A2BE2; }
+    </style>
+</head>
+<body>
+
+    <div class="void-container">
+        <h1 class="void-title text-center">VOID EMBEDDER v2</h1>
+        
+        <div class="flex justify-between items-center mb-2 px-2">
+            <label for="htmlInput" class="text-purple-300 font-semibold tracking-wider uppercase text-xs">Source Code</label>
+            <span id="charCount" class="text-teal-500 text-xs font-mono">0 chars</span>
+        </div>
+
+        <textarea id="htmlInput" class="void-textarea" placeholder="<!-- Paste your HTML, CSS, or JS here -->"></textarea>
+        
+        <div class="flex flex-col sm:flex-row gap-4 justify-center mt-6">
+            <button id="embedBtn" class="void-button">
+                🚀 Launch Into Void
+            </button>
+            <button id="clearBtn" class="bg-transparent border-2 border-purple-500/30 hover:border-purple-500 text-purple-400 font-bold py-2 px-6 rounded-full transition-all text-sm uppercase tracking-widest mt-6 sm:mt-6">
+                Clear
+            </button>
+        </div>
+
+        <footer class="mt-10 text-center opacity-50 text-[10px] uppercase tracking-[4px]">
+            <p>&copy; 2026 VOID_ARCHIVE // SYSTEM_READY</p>
+        </footer>
+    </div>
+
+    <div id="messageBox"></div>
+
+    <script>
+        const htmlInput = document.getElementById('htmlInput');
+        const embedBtn = document.getElementById('embedBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const charCount = document.getElementById('charCount');
+        const messageBox = document.getElementById('messageBox');
+
+        // Update character count
+        htmlInput.addEventListener('input', () => {
+            charCount.textContent = `${htmlInput.value.length} chars`;
+        });
+
+        // Launch logic
+        embedBtn.addEventListener('click', () => {
+            const code = htmlInput.value;
+
+            if (!code.trim()) {
+                showMessage("The void cannot be empty.");
+                return;
+            }
+
+            try {
+                // Create a Blob containing the HTML code
+                const blob = new Blob([code], { type: 'text/html' });
+                
+                // Create a temporary URL for that Blob
+                const blobUrl = URL.createObjectURL(blob);
+                
+                // Attempt to open the Blob URL in a new window
+                const newWindow = window.open(blobUrl, '_blank');
+
+                if (!newWindow) {
+                    showMessage("Launch Blocked! Please allow popups.");
+                }
+            } catch (err) {
+                console.error(err);
+                showMessage("Critical Error: Failed to generate Void URL.");
+            }
+        });
+
+        // Clear logic
+        clearBtn.addEventListener('click', () => {
+            htmlInput.value = "";
+            charCount.textContent = "0 chars";
+            htmlInput.focus();
+        });
+
+        function showMessage(text) {
+            messageBox.textContent = text;
+            messageBox.style.display = 'block';
+            setTimeout(() => {
+                messageBox.style.display = 'none';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
