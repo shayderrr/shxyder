@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kirby's App Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --font-main: 'Nunito', sans-serif;
+            --font-display: 'Press Start 2P', cursive;
+            --kirby-pink: #ffadd6;
+            --kirby-dark-pink: #ff66b2;
+            --dream-blue: #a2d2ff;
+            --star-yellow: #fff700;
+            --light-text: #5d3f52;
+            --ease-out-cubic: cubic-bezier(0.215, 0.610, 0.355, 1);
+        }
+
+        /* --- Scrollbar --- */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: var(--dream-blue); }
+        ::-webkit-scrollbar-thumb { 
+            background-color: var(--kirby-dark-pink); 
+            border-radius: 10px; 
+            border: 3px solid var(--dream-blue); 
+        }
+
+        /* --- Base Setup --- */
+        body {
+            background: linear-gradient(180deg, var(--dream-blue) 0%, var(--kirby-pink) 100%);
+            color: var(--light-text);
+            min-height: 100vh;
+            margin: 0;
+            font-family: var(--font-main);
+            overflow: hidden; /* Controlled by content-wrapper */
+            cursor: none; /* Hide real cursor */
+        }
+
+        /* --- Custom Star Cursor --- */
+        .custom-cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 30px;
+            height: 30px;
+            background-color: var(--star-yellow);
+            /* Star Shape */
+            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+            pointer-events: none;
+            z-index: 10000;
+            filter: drop-shadow(0 0 5px rgba(255, 247, 0, 0.8));
+            transform: translate3d(-50%, -50%, 0);
+            transition: transform 0.05s linear, width 0.2s, height 0.2s;
+        }
+
+        .custom-cursor.hovered {
+            width: 45px;
+            height: 45px;
+            background-color: #fff;
+            filter: drop-shadow(0 0 15px white);
+        }
+
+        #star-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* --- Layout --- */
+        .content-wrapper {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-y: auto;
+            padding: 4rem 1rem;
+        }
+
+        .main-container {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 6px solid white;
+            border-radius: 3rem;
+            box-shadow: 0 20px 50px rgba(255, 102, 178, 0.3);
+            padding: 3rem;
+            width: 100%;
+            max-width: 1100px;
+            margin: auto;
+            animation: slideUp 0.8s var(--ease-out-cubic) forwards;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Typography --- */
+        .title-arcade {
+            font-family: var(--font-display);
+            color: white;
+            text-shadow: 4px 4px 0px var(--kirby-dark-pink), 
+                         -2px -2px 0px var(--dream-blue);
+            font-size: clamp(1.5rem, 5vw, 3rem);
+            margin-bottom: 3rem;
+            line-height: 1.4;
+        }
+
+        /* --- Puffy Buttons --- */
+        .puffy-button {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.2rem 2rem;
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: var(--light-text);
+            background: white;
+            border-radius: 2rem;
+            border: 3px solid transparent;
+            box-shadow: 0 10px 0px rgba(255, 102, 178, 0.2), 0 15px 25px rgba(0,0,0,0.05);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+        }
+
+        .puffy-button:hover {
+            transform: translateY(-5px);
+            border-color: var(--kirby-dark-pink);
+            box-shadow: 0 15px 0px rgba(255, 102, 178, 0.2), 0 20px 30px rgba(255, 102, 178, 0.2);
+            color: var(--kirby-dark-pink);
+        }
+
+        .puffy-button:active {
+            transform: translateY(5px);
+            box-shadow: 0 2px 0px rgba(255, 102, 178, 0.2);
+        }
+
+        .puffy-button i {
+            font-size: 1.2rem;
+            color: var(--kirby-pink);
+            transition: transform 0.5s var(--ease-out-cubic);
+        }
+
+        .puffy-button:hover i {
+            transform: rotate(360deg) scale(1.3);
+            color: var(--star-yellow);
+            -webkit-text-stroke: 1px var(--kirby-dark-pink);
+        }
+
+        .footer {
+            margin-top: 2rem;
+            font-family: var(--font-display);
+            font-size: 0.8rem;
+            color: white;
+            text-shadow: 2px 2px var(--kirby-dark-pink);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="custom-cursor" id="cursor"></div>
+    <canvas id="star-canvas"></canvas>
+
+    <div class="content-wrapper">
+        <div class="main-container text-center">
+            <h1 class="title-arcade">KIRBY'S APP HUB</h1>
+            
+            <div id="button-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Buttons generated by JS -->
+            </div>
+
+            <div class="footer">
+                <i class="fas fa-heart"></i> HAVE A PUFFY DAY <i class="fas fa-heart"></i>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const appLinks = [
+            { name: 'Htmlbed', url: 'https://sites.google.com/view/fus3-bomb/apps/htmlbed', icon: 'fa-code' },
+            { name: 'Masker', url: 'https://sites.google.com/view/fus3-bomb/apps/mask3r', icon: 'fa-mask' },
+            { name: 'HTML Tester', url: 'https://sites.google.com/view/fus3-bomb/apps/html-tester', icon: 'fa-vial' },
+            { name: 'Workout Tips', url: 'https://sites.google.com/view/fus3-bomb/apps/workout-tips', icon: 'fa-dumbbell' },
+            { name: 'Financial Tips', url: 'https://sites.google.com/view/fus3-bomb/apps/financial-tips', icon: 'fa-coins' },
+            { name: 'Rizzbot', url: 'https://sites.google.com/view/fus3-bomb/apps/rizzbot', icon: 'fa-robot' },
+            { name: 'YT Watcher', url: 'https://sites.google.com/view/fus3-bomb/apps/yt-watcher', icon: 'fa-play' },
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const cursor = document.getElementById('cursor');
+            const grid = document.getElementById('button-grid');
+            const canvas = document.getElementById('star-canvas');
+            const ctx = canvas.getContext('2d');
+
+            // --- Star Canvas ---
+            let stars = [];
+            function initCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                stars = Array.from({ length: 80 }, () => ({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 2 + 1,
+                    speed: Math.random() * 0.5 + 0.1,
+                    opacity: Math.random()
+                }));
+            }
+
+            function drawStars() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                stars.forEach(s => {
+                    s.y -= s.speed;
+                    if (s.y < 0) s.y = canvas.height;
+                    ctx.fillStyle = `rgba(255, 255, 255, ${Math.abs(Math.sin(Date.now() * 0.001 + s.opacity))})`;
+                    ctx.beginPath();
+                    ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+                requestAnimationFrame(drawStars);
+            }
+
+            // --- Button Generation ---
+            function createButtons() {
+                appLinks.forEach((app, i) => {
+                    const a = document.createElement('a');
+                    a.href = app.url;
+                    a.target = "_blank";
+                    a.className = "puffy-button";
+                    a.style.animationDelay = `${i * 0.1}s`;
+                    a.innerHTML = `
+                        <span>${app.name}</span>
+                        <i class="fas ${app.icon}"></i>
+                    `;
+                    
+                    // Hover effects for cursor
+                    a.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
+                    a.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
+                    
+                    grid.appendChild(a);
+                });
+            }
+
+            // --- Cursor Movement ---
+            window.addEventListener('mousemove', (e) => {
+                // Use translate3d for better performance
+                cursor.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0) translate(-50%, -50%)`;
+            });
+
+            // Handle window resize
+            window.addEventListener('resize', initCanvas);
+
+            // Init
+            initCanvas();
+            drawStars();
+            createButtons();
+        });
+    </script>
+</body>
+</html>
