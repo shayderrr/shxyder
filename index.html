@@ -6,7 +6,10 @@
   <title>shayder</title>
   <link rel="icon" href="https://cdn.jsdelivr.net/gh/shayderrr/assetscool@main/stuff/eeed4d6642ac9899b40e1e0fca897340.jpg">
   <link href="https://cdn.jsdelivr.net/gh/shayderrr/assetscool@main/stuff/styles.css" rel="stylesheet" type="text/css" />
-  <meta property="og:title" content="frogiee.one">
+  
+  <!-- Updated this line from frogiee.one to shayder -->
+  <meta property="og:title" content="shayder">
+  
   <meta name="theme-color" content="#8e2de2">
   <meta name="msapplication-TileColor" content="#8e2de2">
   <meta property="og:image" content="https://cdn.jsdelivr.net/gh/shayderrr/assetscool@main/stuff/eeed4d6642ac9899b40e1e0fca897340.jpg">
@@ -126,5 +129,15 @@
   </script>
 
   <script src="https://cdn.jsdelivr.net/gh/shayderrr/assetscool@main/stuff/main2.js"></script>
+
+  <!-- ADDED SCRIPT BELOW TO LOCK THE TITLE -->
+  <script>
+    // This script forces the title to stay "shayder" even if other scripts try to change it
+    Object.defineProperty(document, 'title', {
+      get: function() { return 'shayder'; },
+      set: function() { }, // This prevents other scripts from changing it
+      configurable: false
+    });
+  </script>
 </body>
 </html>
